@@ -1,60 +1,46 @@
-import pygame
-import sys
-import random
+from pygame import *
 
-pygame.init() # pygame 모듈 초기화
+C1_GREEN = (204, 255, 204)
+C1_BLUE = (153, 204, 255)
+bgColor = C1_GREEN
 
-img_knockouts = [ 
-    None,
-    pygame.image.load("images/neko4.png"),
-    pygame.image.load("images/neko5.png"),
-    
-]
+size = width, height = 800,600
+screen = display.set_mode(size)
+screen.fill(bgColor)
+display.update()
+init()
 
-neko = [[] for _ in range(10)]
+start = (0,0)
+end = (0,0)
+dSize = (0,0)
+drawing = False
+rectList = []
 
+run =True
+while (run):
+    for pyEvent in event.get():
+        if pyEvent.type == QUIT:
+            run = False
+        elif pyEvent.type == MOUSEBUTTONDOWN:
+            start = pyEvent.pos
+            dSize = 0,0
+            drawing = True
+            print(pyEvent)
+        elif pyEvent.type == MOUSEBUTTONUP:
+            end = pyEvent.pos
+            dSize = end[0]-start[0], end[1]-start[1]
+            drawing = False
+            rect = Rect(start,dSize)
+            rectList.append(rect)
+            print(pyEvent)
+        elif pyEvent.type == MOUSEMOTION and drawing:
+            end = pyEvent.pos
+            dSize = end[0]-start[0], end[1]-start[1]
+            screen.fill(bgColor)
+            for r in rectList:
+                draw.rect(screen,(0,0,0),r,4)
+            draw.rect(screen,(255,0,0),(start,dSize),2)
+            display.update()
 
-
-turn = 0
-map_y = 10
-map_x = 8
-display_width = 912
-display_height = 768
-bg = pygame.image.load("neko_bg.png")
-cursor = pygame.image.load("neko_cursor.png")
-
-for y in range(map_y):
-    for x in range(map_x):
-        neko[y].append(random.choice(range(1,7)))
-
-
-gameDisplay = pygame.display.set_mode((display_width, display_height)) #스크린 초기화
-pygame.display.set_caption("애니팡")  # 타이틀
-clock = pygame.time.Clock() #Clock 오브젝트 초기화
-
-
-def neko_draw():
-    for y in range(map_y):
-        for x in range(map_x):
-            gameDisplay.blit(img_neko[neko[y][x]], (x*72+20, y*72+20))
-
-
-def game(): # 메인 게임 함수
-    
-    tmr = 0 # 시간 관리 변수
-    # 마우스 클래스 부르기
-    
-    while True:
-        tmr += 1 # 매 시간 1초 증가
-        for event in pygame.event.get(): # 윈도운 X 누를 시 나오게끔
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-        gameDisplay.blit(bg,(0,0))
-        neko_draw()
-        pygame.display.update()
-        clock.tick(20)
-
-        
-
-game()
+print("END HERE")
+quit()
